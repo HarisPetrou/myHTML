@@ -1,0 +1,105 @@
+<html>
+    <head style="font-family:verdana;">
+        <title>Main Page</title>
+        <script type="text/javascript">
+
+            function success() {
+                if(document.getElementById("keyword").value==="") { 
+                        document.getElementById('searchbutton').disabled = true; 
+                    } else { 
+                        document.getElementById('searchbutton').disabled = false;
+                    }
+            }
+          
+            function cancel(){
+                document.getElementById("author").value="";
+                document.getElementById("title").value="";
+		document.getElementById("genre").value="Science fiction";
+                document.getElementById("price").value="";
+                return
+            }
+            function allowNumbersOnly(e) {
+                var code = (e.which) ? e.which : e.keyCode;
+                if (code > 31 && (code < 48 || code > 57)&&code!=46) {
+                    e.preventDefault();
+                }
+            }
+            function allowLettersOnly(e){
+               var code = (e.which) ? e.which : e.keycode;
+                if(code >31 && (code <64 || code >122)&&code!=44&&code!=43) {
+                    e.preventDefault();
+                }
+            } 
+        </script>
+    </head>
+    <body style="font-family:verdana;color: white;" background="finalimage.jpg">
+     <p style="font-size:200%;text-align:center;background-color:powderblue;color:blue;">Welcome to my website about books!</p>
+        <p style="font-size:220%;">Please, insert a new book:</p>
+        <p style="font-size:120%;color:yellow;">* Here you can save your book's data to a sql database.</p>
+	<p style="font-size:120%;color:yellow;">* Please for many authors use komma(,) and for space use add symbol (+). Ex. Agatha+Christie</p>
+        <p>Book's author name:</p>
+        <input type="text" id="author"/>
+        <p>Book's title:</p>
+        <input type="text" id="title"/>
+        <p>Book's genre:</p>
+        <select id="genre">
+            <option value="Science fiction">Science  fiction</option>
+            <option value="Satire">Satire</option>
+            <option value="Drama">Drama</option>
+            <option value="Action and Adventure">Action and Adventure</option>
+            <option value="Romance">Romance</option>
+            <option value="Mystery">Mystery</option>
+            <option value="Horror">Horror</option>
+        </select>
+        <p>Book's price:</p>
+        <p style="font-size:120%;color:yellow;">* For a decimal number use full stop (.).</p>
+        <input type="text" id="price" onkeypress="allowNumbersOnly(event)"/> 
+        <p>Are you ready?</p>
+        <input type="submit" value="Submit!" id="submitbutton" onclick="bookinsert()"/>
+        <input type="button" value="Cancel" id="cancel" onclick="cancel()"/>
+        <p style="font-size:220%;">Or search for a book based on a keyword:</p>
+        <p style="font-size:120%;color:yellow;">* Here you insert the title of the book (or a part of it) and if this book exists in the database, its data is displayed. </p>
+        <input type="text" id="keyword" onkeyup="success()"/>
+        <input type="submit" value="Search!" id="searchbutton"  onclick="booksearch()" disabled/>
+	<script type="text/javascript">
+ 		 function bookinsert(){
+		        if(((document.getElementById("author").value)!="") && ((document.getElementById("title").value)!="") && ((document.getElementById("price").value)!="")) {
+		           const obj={};
+		           obj.author=document.getElementById("author").value;
+		           obj.title= document.getElementById("title").value;
+		           const e = document.getElementById("genre");
+			   obj.genre = e.options[e.selectedIndex].value;
+		           obj.price=document.getElementById("price").value;
+			   var sendstring="json_send=" + JSON.stringify(obj);
+		           const xhr=new XMLHttpRequest();
+		           xhr.open('POST','http://localhost:7071/books/',true);
+			   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	                   xhr.send(sendstring);
+			   xhr.onreadystatechange=function(){
+		           if(xhr.readyState==4 && xhr.status==200){
+		               	alert(xhr.responseText);
+		           }}
+		          
+		          
+                } 
+                else {
+                    alert("Please fill all fields!");
+                    return 0;
+                }
+            }
+
+		function booksearch(){
+			var keyword=document.getElementById("keyword").value;
+			var url="http://localhost:7071/books/" +keyword;
+			const xhr2=new XMLHttpRequest();
+            		xhr2.open('GET',url,true);	
+			xhr2.onreadystatechange=function(){
+                     	if(xhr2.readyState==4 && xhr2.status==200){
+                      		alert(xhr2.responseText);
+                     	}}
+			xhr2.send();
+		}
+</script>
+    </body>
+</html>
+
