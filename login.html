@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type = "text/css" href="/css/styles.css">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	   <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+
+		<style>
+		
+
+	   
+	   
+		</style>
+	</head>
+	<body>
+		<div class="login-form" id="login-form">
+			<h1>Σύνδεση στην εφαρμογή</h1>
+			<form action="auth" method="POST">
+				<input type="text" id=username name="username" placeholder="Όνομα χρήστη" required>
+				<input type="password" id=password name="password" placeholder="Κωδικός χρήστη" required>
+				<input id=submit type="submit" value="Σύνδεση">
+			</form>
+		</div>
+		
+	<script type="text/javascript" language="javascript">
+		//Function that checks if the whole form is actually completed, all the input text boxes of the operation filled
+        function checkformadd() {
+            var f = document.forms["formadd"].elements;
+            var cansubmit = true;
+
+            for (var i = 0; i < f.length; i++) {
+                if (f[i].value.length == 0) cansubmit = false;
+            }
+
+            if (cansubmit) {
+                document.getElementById('addbutton').disabled = false;
+            } else {
+                document.getElementById('addbutton').disabled = 'disabled';
+            }
+        }
+		//Function that checks if the whole form is actually completed, all the input text boxes of the operation filled
+
+        
+		//Function that checks if the given 'price' is in the correct form (only allow int or float numbers, user can type every number and the '.' only once special character
+        function isInputIntOrFloat(evt, obj) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            var value = obj.value;
+            
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+		
+		//Function that checks if the input is a letter (only allow letters, not special characters and numbers except '.'), used for the author's name
+        function isInputLetter(evt) {
+            var ch = String.fromCharCode(evt.which);
+            if (!(/[a-z]/.test(ch)) && !(/[A-Z]/.test(ch)) && !(/ /.test(ch)) && !(/\./.test(ch))) {
+                evt.preventDefault();
+            }
+        }
+		
+		//Function that checks if the input is a letter or a number (special characters not allowed), used for book's name
+        function isInputLetterOrNumber(evt) {
+            var ch = String.fromCharCode(evt.which);
+            if (!(/[a-z]/.test(ch)) && !(/[A-Z]/.test(ch)) && !(/ /.test(ch)) && !(/[0-9]/.test(ch))){
+                evt.preventDefault();
+            }
+        }
+    </script>
+    
+		<div class="add" id='add' style="visibility: hidden;" >
+			<form name="formadd" id="formadd">
+            <p>
+                <label for="title"><b>Τίτλος θέματος:</b></label>
+                <input id="title" type="text" name="title" autocomplete="off" required placeholder="Πληκτρολογήστε το πλήρες όνομα του θέματος..." onKeyup="checkformadd()" onkeypress="isInputLetter(event)" />
+            </p>
+            <p>
+                <label for="prerequisites"><b>Προαπαιτούμενα μαθήματα:</b></label>
+                <input id="prerequisites" type="text" name="prerequisites" autocomplete="off" required placeholder="Πληκτρολογήστε τα προαπαιτούμενα..." onKeyup="checkformadd()" onkeypress="isInputLetter(event)" />
+            </p>
+            <p>
+                <label for="studiesLevel"><b>Επίπεδο φοίτησης:</b></label>
+                <select id="studiesLevel" name="studiesLevel">
+                    <option value="Undergraduate">Προπτυχιακό</option>
+                    <option value="Postgraduate">Μεταπτυχιακό</option>
+                    
+                </select>
+            </p>
+            <p>
+                <label for="numberOfStudents"><b>Όριο μαθητών:</b></label>
+                <input id="numberOfStudents" type="text" name="numberOfStudents" autocomplete="off"  required placeholder="Πληκτρολογήστε το όριο μαθητών..."  onKeyup="checkformadd()" onkeypress="return isInputIntOrFloat(event,this)" />
+            </p>
+            
+            <p><button id="addbutton" type="button" disabled="disabled" value="Submit"><b>Προσθήκη</b></button></p>
+
+        </form>
+        </div>
+        
+        <div class="show" id="show" style="visibility: hidden;">
+        	<table id="results" class="table">
+            <caption><b>Αιτήσεις:</b><button id="appbutton" type="button"  value="showapps"><b>"Εμφάνισε αιτήσεις"</b></button></caption>
+            <thead>
+                <tr>
+                    <th>Id Αίτησης</th>
+                    <th>Όνομα Θέματος</th>
+                    <th>Ημερομηνία υποβολής αίτησης</th>
+                    <th>Id καθηγητή</th>
+                    <th>Id φοιτητή</th>
+                    <th>Κατάσταση αίτησης</th>
+                    <th>Αξιολόγηση</th>
+                    
+                    
+                </tr>
+            </thead>
+            <tbody>
+           
+            </tbody>
+        </table>
+        
+        </div>
+        
+         <div class="showsubs" id="showsubs" style="visibility: hidden;">
+        	<table id="resultssubs" class="table">
+            <caption><b>Οι εργασιες μου:</b><button id="subbutton" type="button"  value="showsubs"><b>"Εμφάνισε εργασίες"</b></button></caption>
+            <thead>
+                <tr>
+                    <th>Τίτλος εργασίας</th>
+                    <th>Προαπαιτούμενα</th>
+                    <th>Κύκλος σπουδών</th>
+                    <th>Αριθμός μαθητών</th>
+                    <th>Id καθηγητή</th>       
+                                                  
+                </tr>
+            </thead>
+            <tbody>           
+            </tbody>
+        </table>
+        
+        </div>
+        
+    <div class="logout" id="logoutbutton" style="visibility: hidden;" >
+		<button id="logoutbutton" type="button" style="float:right" ><b>Αποσύνδεση</b></button>
+	</div>
+	
+	<script>
+		document.getElementById('logoutbutton').addEventListener('click',function(){
+			
+			var url = 'http://localhost:3000/destroy';
+		    var xhr = new XMLHttpRequest();
+		    xhr.open('GET', url, true);	
+		    fetch(url)
+            .then((response) => {
+              return response.json();
+            })
+            .then((myJson) => {
+              console.log(myJson);
+            });
+		    window.location.replace("http://localhost:3000/login.html");
+			
+		});
+	
+	</script>
+	<script>
+		//Script that runs when the 'add' button has been clicked, sends a http request to the server using 'post' method
+        document.getElementById('submit').addEventListener('click', function () {
+			//Creates the new books with the given values in json form
+            var text = '{"username":"' + document.getElementById("username").value + '" ,"password" : "' + document.getElementById("password").value +'"}'
+            //var jsonobj = JSON.parse(text);
+			
+			//Creates url and the http request
+            var url = 'http://localhost:3000/logincheck/';
+            var xhr = new XMLHttpRequest();
+			
+			//Initializes the request and uses the method 'post' and uses the given url
+            xhr.open('POST', url, true);
+			//The header of the request, sends the book to the server in json form
+            xhr.setRequestHeader("Content-Type", "application/json");
+			//Sends the data to the server
+            xhr.send(text);
+			
+			//If the request was successful, receives a json message that lets the user know the book has been added to the database
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    var body = xhr.response;
+                    var jsonobj = JSON.parse(body);
+                    alert(jsonobj["Request"]);
+                    
+                    //if reuqest succ -> state:good else bad
+                    if (jsonobj["Request"] == "Successful."){
+                    	var state = "good";
+	                    var url2 = 'http://localhost:3000/set_session/';
+	                    var xhr2 = new XMLHttpRequest();
+	                    xhr2.open('POST',url2,true);
+	                    xhr2.setRequestHeader("Content-Type", "application/json");
+	                    var newtext = '{"username":"' + jsonobj.Username + '" ,"password" : "' + jsonobj.Password + '" ,"state" : "' + state +'"}'
+	                    console.log(newtext);
+	                    xhr2.send(newtext);
+	                    xhr2.onreadystatechange = function() {
+	                        if (xhr2.readyState === 4) {
+	                            var bod = xhr2.response;
+	                            var json = JSON.parse(bod);
+	                            console.log(json);
+	                        }
+	                    }
+	                    //location.replace("http://localhost:3000/home.html");
+	                    document.getElementById('login-form').style.visibility="hidden"; 
+	                    document.getElementById('add').style.visibility="visible";
+	                    document.getElementById('show').style.visibility="visible";
+	                    document.getElementById('showsubs').style.visibility="visible";
+	                    document.getElementById('logoutbutton').style.visibility="visible";
+
+                    }else{
+                    	var state = "bad";
+	                    var url2 = 'http://localhost:3000/set_session/';
+	                    var xhr2 = new XMLHttpRequest();
+	                    xhr2.open('POST',url2,true);
+	                    xhr2.setRequestHeader("Content-Type", "application/json");
+	                    var newtext = '{"username":"' + jsonobj.Username + '" ,"password" : "' + jsonobj.Password + '" ,"state" : "' + state +'"}'
+	                    console.log(newtext);
+	                    xhr2.send(newtext);
+	                    xhr2.onreadystatechange = function() {
+	                        if (xhr2.readyState === 4) {
+	                            var bod = xhr2.response;
+	                            //var json = JSON.parse(bod);
+	                            console.log(bod);
+	                        }
+	                    }                    	                                    	
+                    }
+                    
+                    
+                    
+                 
+                    //fetch(url2)
+                    //.then((response) => {
+                    //  return response.json();
+                    //})
+                    //.then((myJson) => {
+                    //  console.log(myJson);
+                    //});
+                    
+                    //if(jsonobj["Request"] == "Successful."){
+                    //	location.replace("http://localhost:3000/home.html");  
+                    //}
+                }
+			}
+			//Clears everything in the input text boxes
+            document.getElementById("username").value = ""; 
+            document.getElementById("password").value = ""; 
+            
+
+        });
+
+    </script>
+    
+    
+ 	
+ 	<script>
+		
+ 	//Script that runs when the 'add' button has been clicked, sends a http request to the server using 'post' method
+    document.getElementById('addbutton').addEventListener('click', function () {
+		//Creates the new books with the given values in json form
+        var text = '{"id" : 0, "title":"' + document.getElementById("title").value + '" ,"prerequisites" : "' + document.getElementById("prerequisites").value + '" ,"studiesLevel" : "' + document.getElementById("studiesLevel").value + '" ,"numberOfStudents" : "' + document.getElementById("numberOfStudents").value + '"}'
+        //var jsonobj = JSON.parse(text);
+		
+		//Creates url and the http request
+        var url = 'http://localhost:3000/newsubject/';
+        var xhr = new XMLHttpRequest();
+		
+		//Initializes the request and uses the method 'post' and uses the given url
+        xhr.open('POST', url, true);
+		//The header of the request, sends the book to the server in json form
+        xhr.setRequestHeader("Content-Type", "application/json");
+		//Sends the data to the server
+        xhr.send(text);
+		
+		//If the request was successful, receives a json message that lets the user know the book has been added to the database
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                var body = xhr.response;
+                var jsonobj = JSON.parse(body);
+                alert(jsonobj["Request"]);
+				console.log("New subject succefully sented to the js server!");
+            }
+        }
+        
+		//Clears everything in the input text boxes
+        document.getElementById("title").value = ""; 
+        document.getElementById("prerequisites").value = ""; 
+        document.getElementById("studiesLevel").value = "";
+        document.getElementById("numberOfStudents").value = ""; 
+        
+		//Makes the button disabled again
+        document.getElementById("add").disabled = true; 
+    });
+
+    </script>
+    
+    <script>
+    document.getElementById('appbutton').addEventListener('click', function () {
+    	var table = document.getElementById("results");
+	
+		 var url = 'http://localhost:3000/evaluate/';
+	     var xhr = new XMLHttpRequest();
+	     xhr.open('GET', url, true);	
+	     fetch(url)
+       .then(res => res.json())
+       .then((applications) => {
+           if (applications.length == 0) {
+					//If the database doesn't include the given title, returns 0 books
+               console.log("0 data found from the server.")
+               alert("0 αιτήσεις βρέθηκαν!");
+					//Clears the table from the previous results (even if it was already empty)
+					const rankingsBody = document.querySelector("#results>tbody");
+					while (rankingsBody.firstChild){
+						rankingsBody.removeChild(rankingsBody.firstChild);
+					}
+               return 0;
+           } else {
+					//If the database includes books with the given title, returns those books
+               console.log(applications.length + " data found from the server.");
+					//Adds every book in the table
+               const rankingsBody = document.querySelector("#results>tbody");
+               while (rankingsBody.firstChild) {
+                   rankingsBody.removeChild(rankingsBody.firstChild);
+               }
+               console.log('Output: ', applications);
+               //Books is the json
+               while (rankingsBody.firstChil) {
+                   rankingsBody.removeChild(rankingsBody.firstChil);
+               }
+               applications.forEach((row) => {
+                   //Got a problem with row.forEach(cell)... so I did it that way
+                   const tr = document.createElement("tr");
+
+                   const idtd = document.createElement("td");
+                   idtd.textContent = row.id;
+                   tr.appendChild(idtd);
+
+                   const thesistd = document.createElement("td");
+                   thesistd.textContent = row.thesisName;
+                   tr.appendChild(thesistd);
+                   const appdatetd = document.createElement("td");
+                   appdatetd.textContent = new Date(row.applicationDate);
+                   tr.appendChild(appdatetd);
+
+                   const idproftd = document.createElement("td");
+                   idproftd.textContent = row.idProfessor;
+                   tr.appendChild(idproftd);
+
+                   const idstudtd = document.createElement("td");
+                   idstudtd.textContent = row.idStudent;
+                   tr.appendChild(idstudtd);
+					
+                   const statetd = document.createElement("td");
+                   statetd.textContent = row.state;
+                   tr.appendChild(statetd);
+                   
+                   const buttontd = document.createElement("td");
+                   buttontd.innerHTML = '<button type="button" onClick=acceptButton(this) >Αποδοχή</button>' + '<button type="button" onClick=rejectButton(this)>Απόρριψη</button>';
+                   tr.appendChild(buttontd);
+                   
+                   rankingsBody.appendChild(tr);
+               });
+           }
+       }).catch(err => console.error(err));
+    });		
+</script>
+
+<script>
+    document.getElementById('subbutton').addEventListener('click', function () {
+    	var table = document.getElementById("resultssubs");
+	
+		 var url = 'http://localhost:3000/showsubjects/';
+	     var xhr = new XMLHttpRequest();
+	     xhr.open('GET', url, true);	
+	     fetch(url)
+       .then(res => res.json())
+       .then((subjects) => {
+           if (subjects.length == 0) {
+					//If the database doesn't include the given title, returns 0 books
+               console.log("0 data found from the server.")
+               alert("0 εργασίες βρέθηκαν!");
+					//Clears the table from the previous results (even if it was already empty)
+					const rankingsBody = document.querySelector("#resultssubs>tbody");
+					while (rankingsBody.firstChild){
+						rankingsBody.removeChild(rankingsBody.firstChild);
+					}
+               return 0;
+           } else {
+					//If the database includes books with the given title, returns those books
+               console.log(subjects.length + " data found from the server.");
+					//Adds every book in the table
+               const rankingsBody = document.querySelector("#resultssubs>tbody");
+               while (rankingsBody.firstChild) {
+                   rankingsBody.removeChild(rankingsBody.firstChild);
+               }
+               console.log('Output: ', subjects);
+               //Books is the json
+               while (rankingsBody.firstChil) {
+                   rankingsBody.removeChild(rankingsBody.firstChil);
+               }
+               subjects.forEach((row) => {
+                   //Got a problem with row.forEach(cell)... so I did it that way
+                   const tr = document.createElement("tr");
+
+                   const titletd = document.createElement("td");
+                   titletd.textContent = row.title;
+                   tr.appendChild(titletd);
+                   
+                   const prerequisitestd = document.createElement("td");
+                   prerequisitestd.textContent = row.prerequisites;
+                   tr.appendChild(prerequisitestd);
+					
+                   const Studies_leveltd = document.createElement("td");
+                   Studies_leveltd.textContent = row.studiesLevel;
+                   tr.appendChild(Studies_leveltd);
+                   
+                   const number_Of_studentstd = document.createElement("td");
+                   number_Of_studentstd.textContent = row.numberOfStudents;
+                   tr.appendChild(number_Of_studentstd);
+   
+                   
+                   const supervisor_idtd = document.createElement("td");
+                   supervisor_idtd.textContent = row.supervisorId;
+                   tr.appendChild(supervisor_idtd);
+                   
+                   rankingsBody.appendChild(tr);
+               });
+           }
+       }).catch(err => console.error(err));
+    });		
+</script>
+
+<script>
+function acceptButton(lol) {
+	var row = $(lol).parents("tr");
+	var cols = row.children("td");
+	var id = $(cols[0]).text();
+    console.log("The app id that want to accept:" + id);
+    text = id;
+    var url = 'http://localhost:3000/acceptapplication/';
+    var xhr = new XMLHttpRequest();
+	
+	//Initializes the request and uses the method 'post' and uses the given url
+    xhr.open('POST', url, true);
+	//The header of the request, sends the book to the server in json form
+    xhr.setRequestHeader("Content-Type", "plain/text");
+	//Sends the data to the server
+    xhr.send(text);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            var body = xhr.response;
+            var jsonobj = JSON.parse(body);
+            alert(jsonobj["Request"]);
+			console.log("Application accepted!");
+        }
+    }
+    //opote etsi pairnoume to id tis aitisis, stelnoume http req kai to allazoume 
+}
+
+function rejectButton(lol) {
+	var row = $(lol).parents("tr");
+	var cols = row.children("td");
+	var id = $(cols[0]).text();
+	console.log("The app id that want to reject:" + id);
+    text = id;
+    var url = 'http://localhost:3000/rejectapplication/';
+    var xhr = new XMLHttpRequest();
+	
+	//Initializes the request and uses the method 'post' and uses the given url
+    xhr.open('POST', url, true);
+	//The header of the request, sends the book to the server in json form
+    xhr.setRequestHeader("Content-Type", "plain/text");
+	//Sends the data to the server
+    xhr.send(text);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            var body = xhr.response;
+            var jsonobj = JSON.parse(body);
+            alert(jsonobj["Request"]);
+			console.log("Application rejected and deleted!");
+        }
+    }
+    //alert(id);
+}
+</script>
+	</body>
+</html>
